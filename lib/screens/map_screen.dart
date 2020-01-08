@@ -18,45 +18,73 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  LatLng _pickedLocation;
+
+  Future<void> _selectLocation(LatLng position) async {
+    setState(() {
+      _pickedLocation = position;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(title: new Text('Leaflet Maps')),
-        body: new FlutterMap(
-            options: new MapOptions(
-                center: new LatLng(
-                  widget.initialLocation.latitude,
-                  widget.initialLocation.longitude,
+      appBar: new AppBar(
+        title: new Text('Leaflet Maps'),
+        actions: <Widget>[
+          if (widget.isSelecting)
+            IconButton(
+              icon: Icon(Icons.check),
+              onPressed: _pickedLocation == null
+                  ? null
+                  : () {
+                      Navigator.of(context).pop(_pickedLocation);
+                    },
+            )
+        ],
+      ),
+      body: new FlutterMap(
+        options: new MapOptions(
+          center: new LatLng(
+            widget.initialLocation.latitude,
+            widget.initialLocation.longitude,
+          ),
+          minZoom: 10.0,
+          onTap: widget.isSelecting ? _selectLocation : null,
+        ),
+        layers: [
+          new TileLayerOptions(
+            urlTemplate:
+                "https://api.mapbox.com/styles/v1/aldyazarya/ck55aq9y1089t1co2prpg2jsx/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWxkeWF6YXJ5YSIsImEiOiJjazUzOGg1amIwNjEyM2lvNHMzeWNhYnRxIn0.HmEgEFAvCQqtnzfcu9kMOQ",
+            additionalOptions: {
+              'accessToken':
+                  'pk.eyJ1IjoiYWxkeWF6YXJ5YSIsImEiOiJjazUzOGg1amIwNjEyM2lvNHMzeWNhYnRxIn0.HmEgEFAvCQqtnzfcu9kMOQ',
+              'id': 'mapbox.mapbox-streets-v8',
+            },
+          ),
+          new MarkerLayerOptions(
+            markers:
+                // _pickedLocation == null
+                //     ? null
+                //     :
+                [
+              Marker(
+                width: 45.0,
+                height: 45.0,
+                point: _pickedLocation,
+                builder: (context) => new Container(
+                  child: IconButton(
+                    icon: Icon(Icons.location_on),
+                    color: Colors.red,
+                    iconSize: 45.0,
+                    onPressed: () {},
+                  ),
                 ),
-                minZoom: 10.0),
-            layers: [
-              new TileLayerOptions(
-                urlTemplate: "https://api.mapbox.com/styles/v1/aldyazarya/ck55aq9y1089t1co2prpg2jsx/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWxkeWF6YXJ5YSIsImEiOiJjazUzOGg1amIwNjEyM2lvNHMzeWNhYnRxIn0.HmEgEFAvCQqtnzfcu9kMOQ",
-                additionalOptions: {
-                  'accessToken':
-                      'pk.eyJ1IjoiYWxkeWF6YXJ5YSIsImEiOiJjazUzOGg1amIwNjEyM2lvNHMzeWNhYnRxIn0.HmEgEFAvCQqtnzfcu9kMOQ',
-                  'id': 'mapbox.mapbox-streets-v8',
-                },
               ),
-              new MarkerLayerOptions(markers: [
-                new Marker(
-                    width: 45.0,
-                    height: 45.0,
-                    point: new LatLng(
-                      widget.initialLocation.latitude,
-                      widget.initialLocation.longitude,
-                    ),
-                    builder: (context) => new Container(
-                          child: IconButton(
-                            icon: Icon(Icons.location_on),
-                            color: Colors.red,
-                            iconSize: 45.0,
-                            onPressed: () {
-                              print('Marker tapped');
-                            },
-                          ),
-                        ))
-              ])
-            ]));
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
