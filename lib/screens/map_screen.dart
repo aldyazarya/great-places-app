@@ -77,6 +77,7 @@ class _MapScreenState extends State<MapScreen> {
                           icon: Icon(Icons.location_on),
                           color: Colors.red,
                           iconSize: 45.0,
+                          onPressed:  () {},
                         ),
                       ),
                     ),
