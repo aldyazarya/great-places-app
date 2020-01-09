@@ -63,25 +63,24 @@ class _MapScreenState extends State<MapScreen> {
             },
           ),
           new MarkerLayerOptions(
-            markers:
-                // _pickedLocation == null
-                //     ? null
-                //     :
-                [
-              Marker(
-                width: 45.0,
-                height: 45.0,
-                point: _pickedLocation,
-                builder: (context) => new Container(
-                  child: IconButton(
-                    icon: Icon(Icons.location_on),
-                    color: Colors.red,
-                    iconSize: 45.0,
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-            ],
+            markers: (_pickedLocation == null && widget.isSelecting)
+                ? null
+                : [
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: _pickedLocation ??
+                          LatLng(widget.initialLocation.latitude,
+                              widget.initialLocation.longitude),
+                      builder: (context) => new Container(
+                        child: IconButton(
+                          icon: Icon(Icons.location_on),
+                          color: Colors.red,
+                          iconSize: 45.0,
+                        ),
+                      ),
+                    ),
+                  ],
           ),
         ],
       ),
